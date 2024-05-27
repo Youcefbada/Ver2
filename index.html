@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    h1,h2,h3,h4,h5,h6{
+        margin: 0px;
+    }
+    #user{
+        background-color: white;
+        border-radius: 70px;
+        padding: 12 px;
+        padding-left: 20px;
+        font-size: 12px;
+        box-shadow: 0px 5px 10px rgba(0, 0, 0,0.5);
+        margin-top: 12px;
+    }
+    #user.selected{
+        border: solid orange 6px;
+    }
+    body{
+        background: linear-gradient(45deg , blue , red );
+    }
+    #post{
+        background-color: white;
+        border-radius: 10px;
+        font-size: 14px;
+        padding: 10px;
+        box-shadow: 0px 5px 10px rgba(0, 0, 0,0.2);
+        margin-bottom: 20px
+
+    }
+</style>
+<body>
+    <div id="content " style="display: flex;"> 
+         <div style="width: 30%; ">
+            <div style="width: 90%;  height: 100px; margin:0 auto; " id="users">
+                <div id="user">
+                    <h3>Youcef</h3>
+                    <h3>Youcefbada@gmail.com</h3>
+                </div>
+                <div id="user" class="selected">
+                    <h3>Youcef2</h3>
+                    <h3>Youcefb2ada@gmail.com</h3>
+                </div>
+            </div>
+
+         </div>
+         <div id="post-container " style="height: 590px; width: 70%; background-color: white; ">
+            <div id="posts" style="width: 80%; margin: 0 auto; margin-top: 12px;">
+
+            <div id="post" >
+                <h3>Hello World</h3>
+                <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque asperiores non incidunt commodi quasi nostrum. Molestiae explicabo rem laudantium cupiditate?</h4>
+            </div>
+        </div>
+         </div>
+    </div>
+</body>
+<!--the api that we get the post from is : https://jsonplaceholder.typicode.com/posts-->
+<script>
+    function getposts(userid){
+        let request = new XMLHttpRequest()
+        // we call the api and the method that we will use it 
+        // and we use the query parameter to get the post of a specifique person
+        request.open("GET","https://jsonplaceholder.typicode.com/posts?userId=" + userid)
+        // we told him that the data you will git is json 
+        request.responseType = "json"
+        request.send()
+        request.onload = function(){
+            if(request.status >=200 && request.status <300){
+                let posts = request.response
+                // here just for make the posts container empty 
+                document.getElementById("posts").innerHTML = ""
+                for(post of posts){
+                    let content = `<div id="post">
+                    <h3>${post.title}</h3>
+                    <h4>${post.body}</h4>
+                    </div>`;                
+                    document.getElementById("posts").innerHTML += content
+                }
+            }
+            else{
+                alert("there is error in the database")
+            }
+        }
+    }
+    function getusers(){
+        let request = new XMLHttpRequest()
+        // we call the api and the method that we will use it 
+        request.open("GET","https://jsonplaceholder.typicode.com/users")
+        // we told him that the data you will git is json 
+        request.responseType = "json"
+        request.send()
+        request.onload = function(){
+            if(request.status >=200 && request.status <300){
+                let posts = request.response
+                // here just for make the posts container empty 
+                document.getElementById("users").innerHTML = ""
+                for(post of posts){
+                    let userss = `                
+                    <div id="user" onclick = "userClicked(${post.id} , this)">
+                        <h3>${post.name}</h3>
+                        <h3>${post.email}</h3>
+                    </div> `;                
+                    document.getElementById("users").innerHTML += userss
+                }
+            }
+            else{
+                alert("there is error in the database")
+            }
+        }
+    }
+    // the first time
+    getposts(1)
+    // and then each time click in a user will change the data 
+    function userClicked(id ,element){
+        getposts(id)
+        // this code just for the design each time remove the selected option from the last elements
+        let selectedelemnt = document.getElementsByClassName("selected")
+        for(selec of selectedelemnt){
+            selec.classList.remove("selected")
+        }
+        // and give the selected elment the style
+        element.classList.add("selected")
+    }
+    getusers()
+</script>
+</html>
